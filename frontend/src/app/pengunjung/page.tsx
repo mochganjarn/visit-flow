@@ -88,7 +88,8 @@ export default function PengunjungPage() {
     };
 
     fetchKunjungan();
-  }, [router, searchEntity, startDate, endDate, filterSegmen, filterStatus]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchEntity, startDate, endDate, filterSegmen, filterStatus]);
 
   const handleResetFilter = () => {
     setSearchEntity('');
@@ -236,10 +237,14 @@ export default function PengunjungPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {/* Search Nama Entity */}
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label
+                htmlFor="filter-search"
+                className="block text-xs font-medium text-slate-600 mb-1"
+              >
                 Cari Entity
               </label>
               <input
+                id="filter-search"
                 type="text"
                 value={searchEntity}
                 onChange={(e) => setSearchEntity(e.target.value)}
@@ -250,10 +255,14 @@ export default function PengunjungPage() {
 
             {/* Filter Tanggal Mulai */}
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label
+                htmlFor="filter-start-date"
+                className="block text-xs font-medium text-slate-600 mb-1"
+              >
                 Dari Tanggal
               </label>
               <input
+                id="filter-start-date"
                 type="date"
                 value={startDate}
                 onChange={(e) => setStartDate(e.target.value)}
@@ -263,10 +272,14 @@ export default function PengunjungPage() {
 
             {/* Filter Tanggal Akhir */}
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label
+                htmlFor="filter-end-date"
+                className="block text-xs font-medium text-slate-600 mb-1"
+              >
                 Sampai Tanggal
               </label>
               <input
+                id="filter-end-date"
                 type="date"
                 value={endDate}
                 onChange={(e) => setEndDate(e.target.value)}
@@ -276,10 +289,14 @@ export default function PengunjungPage() {
 
             {/* Filter Segmen */}
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label
+                htmlFor="filter-segmen"
+                className="block text-xs font-medium text-slate-600 mb-1"
+              >
                 Segmen
               </label>
               <select
+                id="filter-segmen"
                 value={filterSegmen}
                 onChange={(e) => setFilterSegmen(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -292,10 +309,14 @@ export default function PengunjungPage() {
 
             {/* Filter Status */}
             <div>
-              <label className="block text-xs font-medium text-slate-600 mb-1">
+              <label
+                htmlFor="filter-status"
+                className="block text-xs font-medium text-slate-600 mb-1"
+              >
                 Status Kunjungan
               </label>
               <select
+                id="filter-status"
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
                 className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-800 focus:border-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20"
@@ -407,6 +428,7 @@ export default function PengunjungPage() {
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
                         <select
+                          aria-label={`Ubah status untuk ${item.nama_entity}`}
                           value={item.status}
                           disabled={updatingId === item.id}
                           onChange={(e) =>
