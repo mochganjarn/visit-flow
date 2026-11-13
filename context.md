@@ -124,7 +124,8 @@ Buat 5 Entity TypeORM berikut agar tabel terbentuk otomatis di PostgreSQL:
      - Menyimpan token JWT ke cookie dan redirect ke `/pengunjung`.
   2. **Halaman Daftar Pengunjung (`/pengunjung`):**
      - Menampilkan informasi user yang sedang login beserta badge role-nya (`ADMIN` atau `SALES`).
-     - Menampilkan tabel berisi: ID, Nama Entity (`nama_entity`), Region (`region`), Segmen (`B2B` / `B2G`), Status (`VISITED` hijau / `NOT-VISITED` merah-abu), Tanggal Kunjungan, dan Pembuat Kunjungan (`dibuat_oleh`).
+     - Menyediakan panel Pencarian & Multi-Filter yang dapat digunakan bersamaan: Cari Entity (`search`), Range Tanggal (`startDate` & `endDate`), Segmen (`B2B` / `B2G`), dan Status Kunjungan (`VISITED` / `NOT-VISITED`), lengkap dengan tombol **Reset Semua Filter**.
+     - Menampilkan tabel berisi: ID, Nama Entity (`nama_entity`), Region (`region`), Segmen (`B2B` / `B2G`), Status (`VISITED` hijau / `NOT-VISITED` merah-abu), Tanggal Kunjungan, Pembuat Kunjungan (`dibuat_oleh`), serta dropdown **Ubah Status** (`PATCH /rencana-kunjungan/:id/status`).
      - Data tabel otomatis mengikuti hak akses dari backend (Admin melihat semua data, Sales hanya melihat datanya sendiri).
      - Tombol "Tambah Pengunjung" (`/pengunjung/tambah`) dan tombol "Logout".
   3. **Halaman Tambah Pengunjung (`/pengunjung/tambah`):**
@@ -133,7 +134,11 @@ Buat 5 Entity TypeORM berikut agar tabel terbentuk otomatis di PostgreSQL:
        - Dropdown `Segmen` (pilihan: `B2B`, `B2G`).
        - Dropdown `Status` (pilihan: `NOT-VISITED`, `VISITED`).
        - Input `Tanggal Kunjungan` (`datetime-local`).
-     - Saat submit, panggil `POST /rencana-kunjungan` dengan header `Authorization: Bearer <token>`, lalu redirect ke `/pengunjung`.
+     - Dilengkapi validasi *client-side* serta penanganan *error* dan *loading state*.
+     - Saat submit, panggil `POST /rencana-kunjungan` dengan header `Authorization: Bearer <token>`, tampilkan notifikasi sukses, lalu redirect ke `/pengunjung`.
+- **Unit Testing Frontend (Jest & React Testing Library):**
+  - `src/app/pengunjung/__tests__/page.test.tsx`: Menguji Initial Render, Search Input (`?search=`), Filter Dropdown (`segmen`, `status`, range tanggal), Kombinasi & Reset Filter, Empty State, Validasi Akses RBAC (`admin` vs `sales`), dan aksi Ubah Status (`PATCH`).
+  - `src/app/pengunjung/tambah/__tests__/page.test.tsx`: Menguji Initial Render, Validasi Input Client-side (field kosong & validasi `segmen` B2B/B2G), Alur Sukses Tambah Data (loading state, payload JSON, notifikasi sukses, redirect), serta Error Handling API (`400` & `500`).
 
 ---
 
