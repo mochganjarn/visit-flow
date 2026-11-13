@@ -22,6 +22,7 @@ export default function TambahPengunjungPage() {
   const [tanggalKunjungan, setTanggalKunjungan] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   useEffect(() => {
     const token = Cookies.get('token');
@@ -53,18 +54,42 @@ export default function TambahPengunjungPage() {
     };
 
     fetchEntities();
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
-    setLoading(true);
+    setSuccess('');
+
+    // Validasi Client-side sebelum memanggil API
+    if (!entity) {
+      setError('Entity wajib dipilih');
+      return;
+    }
+
+    if (segmen !== 'B2B' && segmen !== 'B2G') {
+      setError('Segmen harus bernilai B2B atau B2G');
+      return;
+    }
+
+    if (status !== 'NOT-VISITED' && status !== 'VISITED') {
+      setError('Status harus bernilai VISITED atau NOT-VISITED');
+      return;
+    }
+
+    if (!tanggalKunjungan.trim()) {
+      setError('Tanggal kunjungan wajib diisi');
+      return;
+    }
 
     const token = Cookies.get('token');
     if (!token) {
       router.push('/login');
       return;
     }
+
+    setLoading(true);
 
     try {
       const res = await fetch(`${API_URL}/rencana-kunjungan`, {
@@ -86,6 +111,7 @@ export default function TambahPengunjungPage() {
         throw new Error(data.message || 'Gagal menyimpan rencana kunjungan');
       }
 
+      setSuccess('Rencana kunjungan berhasil disimpan!');
       router.push('/pengunjung');
       router.refresh();
     } catch (err: any) {
@@ -116,18 +142,34 @@ export default function TambahPengunjungPage() {
         </div>
 
         {error && (
-          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700">
+          <div
+            role="alert"
+            className="mb-4 rounded-lg bg-red-50 border border-red-200 p-3 text-sm text-red-700"
+          >
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-5">
+        {success && (
+          <div
+            role="status"
+            className="mb-4 rounded-lg bg-emerald-50 border border-emerald-200 p-3 text-sm text-emerald-700"
+          >
+            {success}
+          </div>
+        )}
+
+        <form onSubmit={handleSubmit} noValidate className="space-y-5">
           {/* Dropdown Entity */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label
+              htmlFor="input-entity"
+              className="block text-sm font-medium text-slate-700 mb-1"
+            >
               Entity (Perusahaan / Instansi)
             </label>
             <select
+              id="input-entity"
               required
               value={entity}
               onChange={(e) => setEntity(e.target.value)}
@@ -143,10 +185,14 @@ export default function TambahPengunjungPage() {
 
           {/* Dropdown Segmen */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label
+              htmlFor="input-segmen"
+              className="block text-sm font-medium text-slate-700 mb-1"
+            >
               Segmen Kunjungan
             </label>
             <select
+              id="input-segmen"
               required
               value={segmen}
               onChange={(e) => setSegmen(e.target.value as 'B2B' | 'B2G')}
@@ -159,10 +205,14 @@ export default function TambahPengunjungPage() {
 
           {/* Dropdown Status */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label
+              htmlFor="input-status"
+              className="block text-sm font-medium text-slate-700 mb-1"
+            >
               Status Kunjungan
             </label>
             <select
+              id="input-status"
               required
               value={status}
               onChange={(e) =>
@@ -177,10 +227,14 @@ export default function TambahPengunjungPage() {
 
           {/* Input Tanggal Kunjungan */}
           <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
+            <label
+              htmlFor="input-tanggal"
+              className="block text-sm font-medium text-slate-700 mb-1"
+            >
               Tanggal & Waktu Kunjungan
             </label>
             <input
+              id="input-tanggal"
               type="datetime-local"
               required
               value={tanggalKunjungan}
